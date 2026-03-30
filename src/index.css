@@ -1,0 +1,299 @@
+@import "tailwindcss";
+
+/* Theme tokens: all UI colours live here, components use only these vars */
+:root {
+  /* accent */
+  --accent:          #6366f1;
+  --accent-hover:    #4f52c9;
+  --accent-light:    #818cf8;
+  --accent-glow:     rgba(99,102,241,0.35);
+  --accent-subtle:   rgba(99,102,241,0.12);
+
+  /* surfaces (dark default) */
+  --bg-app:          #060c18;
+  --bg-panel:        #0b1220;
+  --bg-panel-2:      #0f1829;
+  --bg-raised:       #141f35;
+  --bg-input:        #111827;
+  --bg-hover:        rgba(255,255,255,0.04);
+  --bg-active:       rgba(255,255,255,0.08);
+
+  /* borders (dark) */
+  --border:          rgba(255,255,255,0.07);
+  --border-strong:   rgba(255,255,255,0.13);
+
+  /* text (dark) */
+  --text-primary:    #e8eaf0;
+  --text-secondary:  #8b95a8;
+  --text-muted:      #4a5568;
+  --text-inverse:    #0b1220;
+
+  /* canvas bg: the grey area behind the paper */
+  --bg-canvas:       #0d1420;
+}
+
+/* Light mode: toggle by adding .light to <html> */
+html.light {
+  --bg-app:          #f0f4f8;
+  --bg-panel:        #ffffff;
+  --bg-panel-2:      #f8fafc;
+  --bg-raised:       #eef2f7;
+  --bg-input:        #f1f5f9;
+  --bg-hover:        rgba(0,0,0,0.04);
+  --bg-active:       rgba(0,0,0,0.08);
+
+  --border:          rgba(0,0,0,0.09);
+  --border-strong:   rgba(0,0,0,0.16);
+
+  --text-primary:    #1a202c;
+  --text-secondary:  #4a5568;
+  --text-muted:      #a0aec0;
+  --text-inverse:    #ffffff;
+
+  --bg-canvas:       #dde3ec;
+}
+
+/* Semantic utility classes: used instead of hardcoded Tailwind colour classes */
+
+.th-app       { background: var(--bg-app); }
+.th-panel     { background: var(--bg-panel); }
+.th-panel-2   { background: var(--bg-panel-2); }
+.th-raised    { background: var(--bg-raised); }
+.th-input     { background: var(--bg-input); }
+.th-canvas    { background: var(--bg-canvas); }
+
+.th-border       { border-color: var(--border); }
+.th-border-strong { border-color: var(--border-strong); }
+
+.th-text       { color: var(--text-primary); }
+.th-text-2     { color: var(--text-secondary); }
+.th-text-muted { color: var(--text-muted); }
+
+.th-hover:hover { background: var(--bg-hover); }
+.th-active      { background: var(--bg-active); }
+
+/* Base */
+html {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  background: var(--bg-app);
+  color: var(--text-primary);
+}
+
+/* Scrollbar */
+.custom-scrollbar::-webkit-scrollbar        { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track  { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb  { background: var(--bg-raised); border-radius: 4px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }
+
+/* A4 paper page */
+.hw-page {
+  user-select: none;
+  -webkit-user-select: none;
+  position: relative;
+  overflow: hidden;
+}
+.hw-page.textured::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+}
+.hw-page.shadowed {
+  box-shadow:
+    0 2px 4px rgba(0,0,0,0.10),
+    0 8px 24px rgba(0,0,0,0.14),
+    0 24px 64px rgba(0,0,0,0.10);
+}
+.ink-layer {
+  filter: var(--ink-filter, none);
+  text-shadow: var(--ink-shadow, none);
+}
+
+/* Scaled page */
+.scaled-page-outer {
+  --scale: 0.72;
+  width:  calc(var(--page-w) * var(--scale));
+  height: calc(var(--page-h) * var(--scale));
+  position: relative;
+  flex-shrink: 0;
+}
+.scaled-page-inner {
+  width: var(--page-w);
+  height: var(--page-h);
+  transform: scale(var(--scale));
+  transform-origin: top left;
+  position: absolute;
+  top: 0; left: 0;
+}
+@media (max-height: 900px)  { .scaled-page-outer { --scale: 0.60; } }
+@media (max-height: 750px)  { .scaled-page-outer { --scale: 0.50; } }
+@media (max-height: 600px)  { .scaled-page-outer { --scale: 0.42; } }
+@media (min-height: 1000px) { .scaled-page-outer { --scale: 0.80; } }
+@media (min-height: 1200px) { .scaled-page-outer { --scale: 0.90; } }
+
+/* Range slider */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--bg-raised);
+  outline: none;
+  cursor: pointer;
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: 2px solid var(--bg-panel);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+input[type='range']::-webkit-slider-thumb:hover {
+  transform: scale(1.25);
+  box-shadow: 0 0 0 4px var(--accent-glow);
+}
+
+/* Toggle switch */
+.toggle-track {
+  width: 34px;
+  height: 18px;
+  border-radius: 9px;
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  position: relative;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s;
+}
+.toggle-track.active {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.toggle-track::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transition: transform 0.18s, background 0.18s;
+}
+.toggle-track.active::after {
+  transform: translateX(16px);
+  background: white;
+}
+
+/* Accent button */
+.btn-accent {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1);
+  transition: box-shadow 0.18s, transform 0.1s;
+}
+.btn-accent:hover {
+  box-shadow: 0 0 18px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.1);
+  transform: translateY(-1px);
+}
+.btn-accent:active { transform: translateY(0); }
+
+/* Modal panel */
+.modal-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+}
+
+/* Animations */
+.fade-in { animation: fadeIn 0.18s ease-out; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(3px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulseSoft { 0%,100% { opacity: 1; } 50% { opacity: 0.85; } }
+.animate-pulse-subtle { animation: pulseSoft 1.5s ease-in-out infinite; }
+
+/* Light mode override: Tailwind slate classes that leak */
+html.light .forced-dark { display: none; }
+
+/* Margin field scrollbars: accent colored */
+.margin-field-scroll {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) var(--bg-raised);
+}
+.margin-field-scroll::-webkit-scrollbar        { width: 5px; }
+.margin-field-scroll::-webkit-scrollbar-track  { background: var(--bg-raised); border-radius: 4px; }
+.margin-field-scroll::-webkit-scrollbar-thumb  {
+  background: var(--accent);
+  border-radius: 4px;
+  box-shadow: 0 0 6px var(--accent-glow);
+}
+.margin-field-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-light);
+  box-shadow: 0 0 10px var(--accent-glow);
+}
+
+/* ── Mobile & touch responsive ─────────────────────────────────────────── */
+
+/* Prevent tap highlight on buttons */
+button { -webkit-tap-highlight-color: transparent; }
+
+/* Touch-friendly range inputs on mobile */
+@media (max-width: 639px) {
+  input[type='range'] {
+    height: 20px;
+  }
+  input[type='range']::-webkit-slider-thumb {
+    width: 22px;
+    height: 22px;
+  }
+  /* Larger toggle track on mobile */
+  .toggle-track {
+    width: 40px;
+    height: 22px;
+    border-radius: 11px;
+  }
+  .toggle-track::after {
+    width: 16px;
+    height: 16px;
+  }
+  .toggle-track.active::after {
+    transform: translateX(18px);
+  }
+}
+
+/* Tablet: override media-query scale since zoom state controls it */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .scaled-page-outer {
+    /* zoom state applied inline via --scale, media queries still as fallback */
+  }
+}
+
+/* Safe area support for mobile browsers with notch/home bar */
+@supports (padding: env(safe-area-inset-bottom)) {
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Prevent bounce scroll on iOS except in scrollable containers */
+html, body {
+  overscroll-behavior: none;
+}
